@@ -29,3 +29,9 @@ SECTIONS {
     __stack_top = .;
 }
 
+/* memo
+↓ 分かりやすいサイト
+https://monoist.itmedia.co.jp/mn/articles/1003/26/news096_2.html
+
+.rodata : ALIGN(4) のような"ALIGN(4)"は最初の時のみアライメントを行っているらしく、途中はコンパイラがやってくれるらしい。
+*/
