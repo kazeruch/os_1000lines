@@ -25,27 +25,12 @@ void putchar(char ch) {
     sbi_call(ch, 0, 0, 0, 0, 0, 0, 1 /* Console Putchar */);
 }
 
-void kernel_main(void) {
-    memset(__bss, 0, (size_t) __bss_end - (size_t) __bss);
+void handle_trap(struct trap_frame *f) {
+    uint32_t scause = READ_CSR(scause); // 例外の発生理由
+    uint32_t stval = READ_CSR(stval);
+    uint32_t user_pc = READ_CSR(sepc); // 例外発生時のプログラムカウンタ
 
-    PANIC("booted!");
-    printf("unreachable here!\n");
-}
-
-__attribute__((section(".text.boot")))
-__attribute__((naked)) //関数の本文の前後のプロローグとエピローグを生成しないようにする。
-void boot(void) {
-    __asm__ __volatile__(
-        "mv sp, %[stack_top]\n"
-        "j kernel_main\n" // j - jump の意。
-        :
-        : [stack_top] "r" (__stack_top) 
-        /*
-        [stack_top] - 入力オペランドの名前
-        "r" - オペランドが整数レジスタに保存されていることを示す
-        __stack_top - レジスタにマップする変数の名前
-        */
-    );
+    PANIC("unexpected trap scause=%x, stval=%x, sepc=%x\n", scause, stval, user_pc);
 }
 
 // レジスタやメモリの状態の初期化。システムの制御をトラップハンドラに渡す準備。
@@ -132,6 +117,33 @@ void kernel_entry(void) {
         "sret\n"
     );
 }
+
+void kernel_main(void) {
+    memset(__bss, 0, (size_t) __bss_end - (size_t) __bss);
+
+    WRITE_CSR(stvec, (uint32_t) kernel_entry);
+    __asm__ __volatile__("unimp"); // 無効な命令
+
+    PANIC("booted!");
+    printf("unreachable here!\n");
+}
+
+__attribute__((section(".text.boot")))
+__attribute__((naked)) //関数の本文の前後のプロローグとエピローグを生成しないようにする。
+void boot(void) {
+    __asm__ __volatile__(
+        "mv sp, %[stack_top]\n"
+        "j kernel_main\n" // j - jump の意。
+        :
+        : [stack_top] "r" (__stack_top) 
+        /*
+        [stack_top] - 入力オペランドの名前
+        "r" - オペランドが整数レジスタに保存されていることを示す
+        __stack_top - レジスタにマップする変数の名前
+        */
+    );
+}
+
 
 // スタックポインタ
 // https://www.gaio.co.jp/gaioclub/compiler_blog10/
