@@ -26,12 +26,10 @@ void putchar(char ch) {
 }
 
 void kernel_main(void) {
-    printf("\n\nHello %s\n", "World!");
-    printf("1 + 2 = %d, %x\n", 1 + 2, 0x1234abcd);
+    memset(__bss, 0, (size_t) __bss_end - (size_t) __bss);
 
-    for (;;) {
-        __asm__ __volatile__("wfi");
-    }
+    PANIC("booted!");
+    printf("unreachable here!\n");
 }
 
 __attribute__((section(".text.boot")))
@@ -48,4 +46,16 @@ void boot(void) {
         __stack_top - レジスタにマップする変数の名前
         */
     );
+}
+
+__attribute__((naked))
+__attribute__((aligned(4)))
+void kernel_entry(void) {
+    __asm__ __volatile__(
+        "csrw sscratch, sp\n"
+        "addi sp, sp, -4 * 31\n"
+        "sw ra, 4 * 0(sp)\n"
+        "sw gp, 4 * 1(sp)\n"
+        
+    )
 }
