@@ -5,13 +5,22 @@
 #define PROCS_MAX 8         // 最大プロセス数
 #define PROC_UNUSED   0     // 未使用のプロセス管理構造体
 #define PROC_RUNNABLE 1     // 実行可能なプロセス
+// 「Sv32モードでページングを有効化する」ことを示すsatpレジスタのビット
+#define SATP_SV32 (1u << 31)
+// ページテーブルエントリに設定するビット
+#define PAGE_V    (1 << 0)  // 有効化ビット
+#define PAGE_R    (1 << 1)  // 読み込み可能
+#define PAGE_W    (1 << 2)  // 書き込み可能
+#define PAGE_X    (1 << 3)  // 実行可能
+#define PAGE_U    (1 << 4)  // ユーザーモードでアクセス可能
 
 struct process {
     int pid;                // プロセスID
     int state;              // プロセスの状態
     vaddr_t sp;             // コンテキストスイッチ時のスタックポインタ
+    uint32_t *page_table;   // １段目のページテーブルを指すポインタ
     uint8_t stack[8192];    // カーネルスタック
-}
+};
 
 struct sbiret {
     long error;

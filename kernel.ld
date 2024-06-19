@@ -2,6 +2,7 @@ ENTRY(boot)   /* カーネルのエントリポイントはboot関数である�
 
 SECTIONS {
     . = 0x80200000;   /* ベースアドレスは0x80200000である。 */
+    __kernel_base = .;
 
     .text :{   /* コード(CPUの命令コード)領域 */
         KEEP(*(.text.boot));   /* 必ず.text.bootセクションを先頭にする。 */
