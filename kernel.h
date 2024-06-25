@@ -5,6 +5,7 @@
 #define PROCS_MAX 8         // 最大プロセス数
 #define PROC_UNUSED   0     // 未使用のプロセス管理構造体
 #define PROC_RUNNABLE 1     // 実行可能なプロセス
+#define PROC_EXITED   2
 // 「Sv32モードでページングを有効化する」ことを示すsatpレジスタのビット
 #define SATP_SV32 (1u << 31)
 // ページテーブルエントリに設定するビット
@@ -15,6 +16,7 @@
 #define PAGE_U    (1 << 4)  // ユーザーモードでアクセス可能
 #define SSTATUS_SPIE (1 << 5)
 #define USER_BASE 0x1000000
+#define SCAUSE_ECALL 8
 
 struct process {
     int pid;                // プロセスID
