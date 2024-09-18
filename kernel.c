@@ -7,7 +7,8 @@ typedef uint32_t size_t;
 extern char __bss[], __bss_end[], __stack_top[];
 extern char __free_ram[], __free_ram_end[];
 extern char __kernel_base[];
-extern char _binary_shell_bin_start[], _binary_shell_bin_size[];
+// extern char _binary_shell_bin_start[], _binary_shell_bin_size[];
+extern char _binary_pong_bin_start[], _binary_pong_bin_size[];
 
 struct process procs[PROCS_MAX];
 struct process *proc_a;
@@ -348,7 +349,8 @@ void kernel_main(void) {
     idle_proc->pid = -1; // idle
     current_proc = idle_proc;
 
-    create_process(_binary_shell_bin_start, (size_t) _binary_shell_bin_size);
+    // create_process(_binary_shell_bin_start, (size_t) _binary_shell_bin_size);
+    create_process(_binary_pong_bin_start, (size_t) _binary_pong_bin_size);
 
     yield();
     PANIC("switched to idle process");
