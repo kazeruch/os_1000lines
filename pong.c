@@ -54,11 +54,14 @@ void draw_game_init(struct pong *p) {
   // ２つのバーを用意する
   for(int i = p->bar1_x; i < p->bar1_x + p->bar_length; i++) {
     printf("\033[%d;%dH\033[34m|", i, p->bar1_y); // 青色
-    printf("\033[%d;%dH\033[32m|", i, p->bar2_y);
+    printf("\033[%d;%dH\033[32m|", i, p->bar2_y); // 緑色
   }
 
   // ボールを用意する
   printf("\033[%d;%dH\033[33mo", p->ball_x, p->ball_y);
+
+  // 操作方法を表示する
+  printf("\033[%d;0H%s", p->height+2, "Player1: w, s\nPlayer2: o, l");
 }
 
 // ユーザーからの入力を受け付け、バーの位置を更新する
@@ -132,13 +135,13 @@ void update_ball(struct pong *p) {
 
   // 左の壁に当たった場合
   if(p->ball_y + p->velocity_y == 1) {
-    printf("\033[32;0H%s\n", "Game Over!");
+    printf("\033[%d;0H%s\n\n", p->height+5, "\033[32mGreen Won!\033[39m");
     exit();
   }
 
   // 右の壁に当たった場合
   if(p->ball_y + p->velocity_y == p->width) {
-    printf("\033[32;0H%s\n", "Game Over!");
+    printf("\033[%d;0H%s\n\n", p->height+5, "\033[34mBlue Won!\033[39m");
     exit();
   }
 
