@@ -32,7 +32,8 @@ struct pong init() {
 
 void draw_game_init(struct pong *p) {
   // 一旦画面をクリアする
-  printf("\033[2J");
+  printf("\033[2J\033[1;1H");
+
   // 大枠を作る
   for(int i = 0; i < p->width; i++) {
     printf("#");
@@ -58,8 +59,6 @@ void draw_game_init(struct pong *p) {
 
   // ボールを用意する
   printf("\033[%d;%dH\033[33mo", p->ball_x, p->ball_y);
-
-  printf("\033[31;0H");
 }
 
 // ユーザーからの入力を受け付け、バーの位置を更新する
@@ -143,7 +142,7 @@ void update_ball(struct pong *p) {
     exit();
   }
 
-  // ボールの更新
+  // ボールの描画の更新
   printf("\033[%d;%dH ", p->ball_x, p->ball_y);
   p->ball_x = p->ball_x + p->velocity_x;
   p->ball_y = p->ball_y + p->velocity_y;
@@ -152,9 +151,14 @@ void update_ball(struct pong *p) {
 
 void main(void) {
   struct pong p;
+
+  // ゲームの設定を初期化
   p = init();
-  printf("\033[1;1H");
+
+  // ゲームの初期状態を描画
   draw_game_init(&p);
+
+  // ゲームの状態を更新
   int cnt = 0;
   while(true) {
     update_bars(&p);
