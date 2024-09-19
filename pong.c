@@ -112,7 +112,7 @@ void update_ball(struct pong *p) {
   }
 
   // 下の壁に当たった場合
-  if(p->ball_x + p->velocity_x == p->height-1) {
+  if(p->ball_x + p->velocity_x == p->height) {
     p->velocity_x = -p->velocity_x;
   }
 
