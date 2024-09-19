@@ -299,26 +299,33 @@ long getchar(void) {
 }
 
 void handle_syscall(struct trap_frame *f) {
+    long ch;
     switch (f->a3) {
         case SYS_PUTCHAR:
             putchar(f->a0);
             break;
         case SYS_GETCHAR:
             while (1) {
-                long ch = getchar();
+                ch = getchar();
                 if (ch >= 0) {
                     f->a0 = ch;
                     break;
                 }
-
                 yield();
             }
-            break;
         case SYS_EXIT:
             printf("process %d exited\n", current_proc->pid);
             current_proc->state = PROC_EXITED;
             yield();
-            PANIC("unreachable");   // 戻ってきてしまった場合
+            PANIC("unreachable");   // 戻ってきてしまった場合'
+        case SYS_CHECKCHAR:
+            ch = getchar();
+            if (ch >= 0) {
+                f->a0 = ch;
+            } else {
+                f->a0 = -1;
+            }
+            break;
         default:
             PANIC("unexpected syscall a3=%x\n", f->a3);
     }

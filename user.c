@@ -28,6 +28,10 @@ int getchar(void) {
     return syscall(SYS_GETCHAR, 0, 0, 0);
 }
 
+int checkchar(void) {
+    return syscall(SYS_CHECKCHAR, 0, 0, 0);
+}
+
 __attribute__((section(".text.start")))
 __attribute__((naked))
 void start(void) {
